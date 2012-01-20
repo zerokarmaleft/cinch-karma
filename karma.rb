@@ -3,11 +3,11 @@ require 'cinch'
 class Karma
   include Cinch::Plugin
 
-  match /[a-z_\-\[\]\\^{}|][a-z0-9_\-\[\]\\^{}|]*[+][+]/
+  match /(\S+)\+{2}/
 
   def initialize(*args)
     super
-    @users = {}
+    @users = Hash.new(0)
   end
 
   def execute(m)
@@ -17,12 +17,8 @@ class Karma
       m.reply "Increasing my karma would result in overflow."
     elsif nick == m.user.nick
       m.reply "Just keep patting yourself on the back there, sport."
-    elsif @users.key? nick
-      @users[nick] += 1
-      m.reply "#{ nick } has #{ @users[nick] } awesome points."
     else
-      @users[nick] = 1
-      m.reply "#{ nick } has #{ @users[nick] } awesome points."
+      m.reply "#{ nick } has #{ @users[nick] += 1 } awesome points."
     end
   end
 end
