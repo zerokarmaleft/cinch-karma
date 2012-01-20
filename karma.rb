@@ -12,7 +12,8 @@ class Karma
 
   def execute(m)
     cmd = m.params[1]
-    nick = cmd.match(/[a-z_\-\[\]\\^{}|][a-z0-9_\-\[\]\\^{}|]*/)[0]
+    nick = cmd.match(/[!](\S+)[+]{2}/)[1]
+    
     if nick == @bot.nick
       m.reply "Increasing my karma would result in overflow."
     elsif nick == m.user.nick
