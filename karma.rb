@@ -20,6 +20,18 @@ class Karma
     end
   end
 
+  match /(\S+)[\-]{2}/, method: :decrement
+  def decrement(m, nick)
+    if nick == @bot.nick
+      m.reply "I wouldn't do that if I were you..."
+    elsif nick == m.user.nick
+      m.reply "There's a special room on this network for self-flagellation."
+    else
+      @users[nick] -= 1
+      score(m, nick)
+    end
+  end
+
   match /karma\?(\s+)?(\S+)?/, method: :scores
   def scores(m, cmd, nick)
     if nick
