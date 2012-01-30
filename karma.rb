@@ -5,7 +5,15 @@ class Karma
 
   def initialize(*args)
     super
-    @users = Hash.new(0)
+    @scores_file = "karma.json"
+    if File.exist? @scores_file
+      File.open(@scores_file, "r") do |f|
+        @users = JSON.parse(f.read)
+        @users.default = 0
+      end
+    else
+      @users = Hash.new(0)
+    end
   end
 
   match /(\S+)[\+]{2}/, method: :increment
@@ -16,6 +24,7 @@ class Karma
       m.reply "Just keep patting yourself on the back there, sport."
     else
       @users[nick] += 1
+      save
       score(m, nick)
     end
   end
@@ -25,9 +34,10 @@ class Karma
     if nick == @bot.nick
       m.reply "I wouldn't do that if I were you..."
     elsif nick == m.user.nick
-      m.reply "There's a special room on this network for self-flagellation."
+      m.reply "There are special rooms on this network for self-flagellation."
     else
       @users[nick] -= 1
+      save
       score(m, nick)
     end
   end
@@ -43,5 +53,11 @@ class Karma
   
   def score(m, nick)
     m.reply "#{ nick } has #{ @users[nick] } awesome points."
+  end
+
+  def save
+    File.open(@scores_file, "w") do |f|
+      f.write(@users.to_json)
+    end
   end
 end
