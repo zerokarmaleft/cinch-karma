@@ -23,9 +23,8 @@ class Karma
     elsif nick == m.user.nick
       m.reply "Just keep patting yourself on the back there, sport."
     else
-      @users[nick] += 1
-      save
-      score(m, nick)
+      update_user(nick) { |nick| @users[nick] += 1 }
+      show_score(m, nick)
     end
   end
 
@@ -36,23 +35,27 @@ class Karma
     elsif nick == m.user.nick
       m.reply "There are special rooms on this network for self-flagellation."
     else
-      @users[nick] -= 1
-      save
-      score(m, nick)
+      update_user(nick) { |nick| @users[nick] -= 1 }
+      show_score(m, nick)
     end
   end
 
-  match /karma\?(\s+)?(\S+)?/, method: :scores
-  def scores(m, cmd, nick)
+  match /karma\?(\s+)?(\S+)?/, method: :show_scores
+  def show_scores(m, cmd, nick)
     if nick
-      score(m, nick)
+      show_score(m, nick)
     else
-      @users.each { |nick, score| score(m, nick) }
+      @users.each { |nick, score| show_score(m, nick) }
     end
   end
   
-  def score(m, nick)
+  def show_score(m, nick)
     m.reply "#{ nick } has #{ @users[nick] } awesome points."
+  end
+
+  def update_user(nick)
+    yield(nick)
+    save
   end
 
   def save
