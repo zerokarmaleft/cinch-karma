@@ -45,7 +45,8 @@ class Karma
     if nick
       show_score(m, nick)
     else
-      @users.each { |nick, score| show_score(m, nick) }
+      sorted_users = @users.sort_by { |k, v| v }
+      sorted_users.each { |nick, score| show_score(m, nick) }
     end
   end
   
