@@ -41,12 +41,13 @@ class Karma
   end
 
   match /karma\?(\s+)?(\S+)?/, method: :show_scores
-  def show_scores(m, cmd, nick)
+  def show_scores(m, cmd, nick, n=5)
     if nick
       show_score(m, nick)
     else
       sorted_users = @users.sort_by { |k, v| v }
-      sorted_users.each { |nick, score| show_score(m, nick) }
+      top_scores   = sorted_users.take(n)
+      top_scores.each { |nick, score| show_score(m, nick) }
     end
   end
   
